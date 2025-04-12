@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+
+    <div class="cover-container d-flex w-100 mx-auto flex-column">
+        <header class="pt-4">
+            <div>
+                <a class="float-md-start mb-0 nav-link text-light fw-bold py-1 px-0" href="{{ path('app_home') }}">ICC</a>
+                <nav class="nav nav-masthead justify-content-center float-md-end">
+                    {#<a class="nav-link text-light fw-bold py-1 px-0 active" aria-current="page" href="{{ path('app_home') }}">Accueil</a>#}
+                    {% if not app.user %}
+                        <a class="nav-link text-light fw-bold py-1 px-0 ps-3" href="{{ path('app_login') }}">Connexion</a>
+                        <a class="nav-link text-light fw-bold py-1 px-0 ps-3" href="{{ path('app_register') }}">Inscription</a>
+                    {% endif %}
+                    {% if app.user %}
+                        <a class="nav-link text-light fw-bold py-1 px-0 ps-3" href="{{ path('app_casino_home') }}">Jouer</a>
+                        <a class="nav-link text-light fw-bold py-1 px-0 ps-3" href="{{ path('app_logout') }}">Déconnexion</a>
+                    {% endif %}
+                </nav>
+            </div>
+        </header>
+
+        <main class="px-3 m-auto">
+            <img class="img-fluid m-5" src="{{ asset('images/Groupe2.png') }}" style="width: 280px">
+            <h3>Interactive Crypto Casino</h3>
+            <p class="lead">Le meilleur site pour jouer sa crypto en toute sécurité. <br>
+                Si tu perds, c'est un problème d'ICC (ou alors t'as pas de bol).</p>
+            <p class="lead">
+                <a href="{{ path('app_casino_home') }}" class="btn btn-lg btn-light fw-bold border-white bg-white">Jouer maintenant !</a>
+            </p>
+        </main>
+
+    </div>
+{% endblock %}
