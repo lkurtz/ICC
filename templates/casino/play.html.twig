@@ -1,0 +1,70 @@
+{% extends '../base.html.twig' %}
+
+{% block title %}Casino{% endblock %}
+
+{% block content %}
+<p>HELLO</p>
+<button onclick="connectWallet()">Connecter RabbiWallet</button>
+<button onclick="enterGame()">Entrer dans la partie</button>
+<button onclick="getPlayers()">Voir les joueurs</button>
+<button onclick="isGameOver()">Le jeu est-il terminé ?</button>
+<button onclick="pickWinner()">Tirer le gagnant (admin)</button>
+
+<div id="output"></div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script>
+    const contractAddress = "TON_ADRESSE_DE_CONTRAT";
+    const contractABI = TON_ABI_JSON; // Copie-colle le JSON du build ici
+
+    let web3;
+    let casino;
+
+    async function connectWallet() {
+        if (window.RabbiWallet) {
+            web3 = new Web3(window.RabbiWallet);
+            await window.RabbiWallet.request({ method: 'eth_requestAccounts' });
+            casino = new web3.eth.Contract(contractABI, contractAddress);
+            log("RabbiWallet connecté");
+        } else if (window.ethereum) {
+            web3 = new Web3(window.ethereum);
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            casino = new web3.eth.Contract(contractABI, contractAddress);
+            log("MetaMask connecté");
+        } else {
+            alert("Aucun portefeuille détecté");
+        }
+    }
+
+    async function enterGame() {
+        const accounts = await web3.eth.getAccounts();
+        await casino.methods.enterGame().send({ from: accounts[0], value: web3.utils.toWei("0.01", "ether") });
+        log("Entré dans la partie");
+    }
+
+    async function getPlayers() {
+        const players = await casino.methods.getPlayers().call();
+        log("Joueurs : " + players.join(", "));
+    }
+
+    async function isGameOver() {
+        const over = await casino.methods.isGameOver().call();
+        log("Le jeu est-il terminé ? " + over);
+    }
+
+    async function pickWinner() {
+        const accounts = await web3.eth.getAccounts();
+        await casino.methods.pickWinner().send({ from: accounts[0] });
+        log("Tirage en cours...");
+    }
+
+    function log(message) {
+        document.getElementById("output").innerText = message;
+    }
+</script>
+
+{% endblock %}
